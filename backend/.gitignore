@@ -1,0 +1,34 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+eggs/
+*.egg-info/
+lib/
+pip-wheel-metadata/
+share/python-wheels/
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+.env
+
+# IDE/editor
+.idea/
+.vscode/
+*.iml
+
+# Logs and reports
+*.log
+*.coverage
+
+# Tooling caches
+.mypy_cache/
+.pytest_cache/
+
+# System
+*.DS_Store

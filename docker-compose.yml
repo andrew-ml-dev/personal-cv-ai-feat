@@ -1,0 +1,23 @@
+services:
+  llama-engine:
+    build: ./llm
+    image: my-local-rpi-llama  # <--- UNIQUE NAME
+    container_name: llama-edge-server
+    restart: unless-stopped
+    ports:
+      - "8090:8081"
+    volumes:
+      - ./models:/models
+    command: 
+      - "-m"
+      - "/models/model.gguf"
+      - "-c"
+      - "2048"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8081"
+      - "-t"
+      - "4"
+      - "-fa"
+      - "on"
