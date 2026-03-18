@@ -1,6 +1,4 @@
-# Alex Chen — CV/ML Engineer Portfolio
-
-A premium, production-ready portfolio application for a Computer Vision / Machine Learning Engineer. Built with a "Premium Modern AI Assistant" aesthetic — dark mode, glassmorphism, cyberpunk neon accents, and a real-time streaming chat interface.
+# Andrzej Ludkiewicz CV/ML Engineer 
 
 ## Tech Stack
 
