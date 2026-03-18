@@ -13,6 +13,7 @@ from config import settings
 from models.chat import ChatRequest
 from helper.chat import get_session_id, get_user_history, save_to_history
 from helper.chat import sanitize_output, is_safe_prompt, build_messages, get_cache_key, CACHE
+from main import limiter
 
 router = APIRouter()
 
@@ -141,6 +142,7 @@ async def stream_llama(messages, cache_key, session_id, use_history):
 # ------------------------
 
 @router.post("/chat")
+@limiter.limit("5/minute")
 async def chat(req: ChatRequest, request: Request):
 
     session_id = get_session_id(req, request)
