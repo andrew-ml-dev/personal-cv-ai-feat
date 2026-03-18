@@ -4,6 +4,8 @@ import { WELCOME_MESSAGE } from '../data/mockData'
 let idCounter = 1
 const genId = () => `msg_${idCounter++}_${Date.now()}`
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:3234'
+
 export function useChat() {
   const [messages, setMessages] = useState([WELCOME_MESSAGE])
   const [isTyping, setIsTyping] = useState(false)
@@ -89,7 +91,7 @@ export function useChat() {
         const controller = new AbortController()
         abortRef.current = controller
 
-        const response = await fetch('/api/chat', {
+        const response = await fetch(`${BACKEND_URL}/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text }),
@@ -129,7 +131,7 @@ export function useChat() {
       } catch (err) {
         if (err.name !== 'AbortError') {
           finalizeStream(
-            "I can't reach the backend right now. Make sure the FastAPI server is running on port 3234 (`uvicorn main:app --reload` in the `/backend` folder).",
+            `I can't reach the backend right now. Make sure the FastAPI server is running at ${BACKEND_URL} (\`uvicorn main:app --reload\` in the \`/backend\` folder).`,
           )
         }
       } finally {
