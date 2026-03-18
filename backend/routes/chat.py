@@ -13,7 +13,7 @@ from config import settings
 from models.chat import ChatRequest
 from helper.chat import get_session_id, get_user_history, save_to_history
 from helper.chat import sanitize_output, is_safe_prompt, build_messages, get_cache_key, CACHE
-from main import limiter
+from dependencies import limiter
 
 router = APIRouter()
 
