@@ -21,3 +21,16 @@ services:
       - "4"
       - "-fa"
       - "on"
+  backend:
+    build:
+      context: ./backend
+    image: cv-portfolio-backend
+    container_name: cv-portfolio-backend
+    restart: unless-stopped
+    ports:
+      - "3234:8000"
+    environment:
+      LLAMA_HOST: llama-engine
+      LLAMA_PORT: 8081
+    depends_on:
+      - llama-engine
