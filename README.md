@@ -1,96 +1,83 @@
-# Andrzej Ludkiewicz CV/ML Engineer 
+# CV Portfolio
+
+This is a full-stack portfolio application that features an interactive AI chatbot representing the portfolio owner's persona (Andrew). The system includes a React frontend, a FastAPI backend, and an integrated local LLM powered by `llama.cpp`.
 
 ## Tech Stack
 
-| Layer | Technology |
+| Component | Technologies |
 |---|---|
-| Frontend | React 18, Vite, Tailwind CSS, Lucide React |
-| Backend | Python, FastAPI, SSE streaming |
-| Style | Glassmorphism · Neon glows · Dark mode |
+| **Frontend** | React 18, Vite, Tailwind CSS, Lucide React |
+| **Backend** | Python, FastAPI, SSE streaming |
+| **LLM Engine**| `llama.cpp` using a quantised GGUF model |
+| **Proxy**     | Caddy (for Docker deployments) |
 
 ---
 
-## Quick Start
+## How to Run
 
-### 1. Frontend
+There are two primary ways to run the application: using Docker (recommended for full deployment) or running the services independently locally (recommended for development).
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### 1. Running with Docker Compose (Full Stack)
 
-Runs at **http://localhost:5173**
+This will spin up the `llama-engine`, `backend`, `frontend`, and a `caddy` proxy server.
 
-### 2. Backend
+1. Ensure Docker and Docker Compose are installed.
+2. Ensure you have the required model file placed at `./models/model.gguf`.
+3. Run the stack from the root directory:
+   ```bash
+   docker-compose up -d --build
+   ```
 
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
-```
+The application will be accessible via **http://localhost** (Caddy proxy) and will route frontend and backend API requests automatically.
 
-Runs at **http://localhost:8000**
+### 2. Running Locally (Development)
 
-> The Vite dev server proxies `/api/*` to `localhost:8000` automatically.
+You can run the frontend and backend servers separately for development purposes. You typically still need an LLM endpoint running for the backend to connect to.
 
----
+#### Backend
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
+2. Set up a virtual environment and install dependencies:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+3. Run the FastAPI development server:
+   ```bash
+   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   ```
+   The backend API will run at **http://localhost:8000**.
 
-## Features
-
-- **Sidebar navigation** — click any section to get an instant rich widget response
-- **SSE streaming** — type a custom message and watch the AI reply stream word-by-word
-- **Component Registry** — scalable `WidgetRegistry` maps message types to React components
-- **Rich widgets:**
-  - `TextBubble` — markdown-lite formatted chat bubbles (user & bot)
-  - `StackWidget` — colour-coded skill grid with neon tag borders
-  - `ExperienceLogWidget` — animated timeline with glowing nodes
-  - `ProjectVisionWidget` — CV detection demo with live bounding box simulation
-  - `ContactWidget` — styled contact links with icons
-- **Top bar** — live metrics (FPS, latency) simulating a real edge deployment
-- **Typing indicator** — animated dots while the bot is "thinking"
+#### Frontend
+1. In a new terminal, navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend will run at **http://localhost:5173**. *Note: Vite is configured to automatically proxy `/api/*` requests to `http://localhost:8000`.*
 
 ---
 
 ## Project Structure
 
 ```
-example/
-├── frontend/
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   └── src/
-│       ├── App.jsx
-│       ├── main.jsx
-│       ├── index.css
-│       ├── data/mockData.js          ← all mock content & nav config
-│       ├── hooks/useChat.js          ← chat state + SSE streaming logic
-│       └── components/
-│           ├── Sidebar.jsx
-│           ├── TopBar.jsx
-│           ├── ChatFeed.jsx
-│           ├── InputBar.jsx
-│           ├── TypingIndicator.jsx
-│           └── widgets/
-│               ├── WidgetRegistry.jsx
-│               ├── TextBubble.jsx
-│               ├── StackWidget.jsx
-│               ├── ExperienceLogWidget.jsx
-│               ├── ProjectVisionWidget.jsx
-│               └── ContactWidget.jsx
-└── backend/
-    ├── main.py                       ← FastAPI app with SSE endpoint
-    └── requirements.txt
+cv_portfolio/
+├── frontend/             ← React application powered by Vite
+├── backend/              ← FastAPI service handling LLM logic and guardrails
+├── llm/                  ← Dockerfile and configuration for llama-engine
+├── models/               ← Directory for storing the GGUF model file
+├── Caddyfile             ← Caddy web server configuration
+└── docker-compose.yml    ← Compose file orchestrating the entire stack
 ```
 
----
-
-## Customisation
-
-- **Personal info** — edit `frontend/src/data/mockData.js`
-- **Add a new widget** — create the component and register it in `WidgetRegistry.jsx`
-- **Add a nav section** — append an entry to `NAV_ITEMS` in `mockData.js`
-- **Swap backend LLM** — replace `pick_response()` in `backend/main.py` with a real LLM call
+For more details on the individual components, refer to the `README.md` files in the `frontend` and `backend` directories.
