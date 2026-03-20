@@ -1,9 +1,10 @@
 import { Activity, Cpu, Wifi } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { TOPBAR } from '../config'
+import { API_STATS_PATH, STATS_POLL_INTERVAL_MS } from '../config/env'
 
-const STATS_ENDPOINT = '/api/chat/stats'
-const STATS_POLL_INTERVAL = 500
+const STATS_ENDPOINT = API_STATS_PATH
+const STATS_POLL_INTERVAL = STATS_POLL_INTERVAL_MS
 
 const DEFAULT_STATS = {
   cpu_percent: 0,

@@ -4,12 +4,14 @@
 // Fields: date, role, company, companyUrl (optional), text
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { envString } from './env'
+
 export const EXPERIENCE = [
   {
     date: '2024 — Present',
     role: 'Senior CV Engineer',
     company: 'Fishial.AI',
-    companyUrl: 'https://fishial.ai',
+    companyUrl: envString('VITE_EXPERIENCE_FISHIAL_URL', 'https://fishial.ai'),
     text:
       'Architected and optimized real-time fish detection pipeline using YOLOv8-nano with TensorRT. ' +
       'Achieved 12ms inference latency on Raspberry Pi 5. ' +

@@ -1,3 +1,5 @@
+import { envString } from './env'
+
 // ─────────────────────────────────────────────────────────────────────────────
 // PROJECTS
 // Fields:
@@ -45,8 +47,10 @@ export const PROJECTS = [
 
     tags: ['PyTorch Lightning', 'YOLO', 'DinoV2', 'Metric Learning'],
 
-    repoUrl:
+    repoUrl: envString(
+      'VITE_PROJECT_FISH_REPO_URL',
       'https://github.com/fishial/fish-identification/tree/main',
+    ),
 
     cvDemoType: 'fish',
   },

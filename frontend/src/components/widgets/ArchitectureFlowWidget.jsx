@@ -4,6 +4,15 @@ import {
   ShieldCheck, Activity, Search,
   Hash, BarChart2, Layers, History,
 } from 'lucide-react'
+import {
+  DIAGRAM_POST_CHAT_LABEL,
+  DIAGRAM_RAG_EMBEDDING_MODEL,
+  DIAGRAM_RAG_PHASE_TEXT,
+  DIAGRAM_RAG_SUBTITLE,
+  DIAGRAM_RAG_TOP_CHUNKS_LABEL,
+  DIAGRAM_LLM_SUBTITLE,
+  ragChunkLabels,
+} from '../../config/env'
 
 // ─── CSS injected once ───────────────────────────────────────────────────────
 const ANIM_CSS = `
@@ -141,13 +150,12 @@ function VecBars() {
 }
 
 // ─── Chunk list with reveal animation ────────────────────────────────────────
-const CHUNKS = ['Work Experience', 'Tech Stack', 'ML Projects']
-
 function ChunkList() {
+  const chunks = ragChunkLabels()
   return (
     <div className="space-y-1 mt-1.5 relative">
       <div className="scan" />
-      {CHUNKS.map((c, i) => (
+      {chunks.map((c, i) => (
         <div
           key={i}
           className="text-[8px] text-zinc-300 bg-amber-500/10 rounded px-2 py-0.5 flex items-center gap-1.5"
@@ -204,7 +212,7 @@ export default function ArchitectureFlowWidget({ payload = {} }) {
 
         {/* LINK 1: Browser ↔ FastAPI */}
         <VConnector
-          downColor="cyan" downLabel="POST /api/chat" downSpeed="2s"
+          downColor="cyan" downLabel={DIAGRAM_POST_CHAT_LABEL} downSpeed="2s"
           upColor="green"  upLabel="SSE stream"       upSpeed="2.5s" upDelay="1s"
         />
 
@@ -247,7 +255,7 @@ export default function ArchitectureFlowWidget({ payload = {} }) {
             </div>
             <div>
               <div className="text-[11px] font-bold text-zinc-200 uppercase tracking-wide">Semantic Search</div>
-              <div className="text-[9px] text-zinc-500 font-mono">fastembed + ChromaDB · cosine · top-4</div>
+              <div className="text-[9px] text-zinc-500 font-mono">{DIAGRAM_RAG_SUBTITLE}</div>
             </div>
           </div>
 
@@ -260,7 +268,7 @@ export default function ArchitectureFlowWidget({ payload = {} }) {
                 <Hash size={9} className="text-amber-400/80" />
                 <span className="text-[9px] font-mono text-amber-400/80 font-bold">fastembed</span>
               </div>
-              <div className="text-[8px] text-zinc-600 font-mono mb-1">BAAI/bge-small-en-v1.5</div>
+              <div className="text-[8px] text-zinc-600 font-mono mb-1">{DIAGRAM_RAG_EMBEDDING_MODEL}</div>
               <VecBars />
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[8px] text-zinc-600 font-mono">384-dim vector</span>
@@ -277,7 +285,7 @@ export default function ArchitectureFlowWidget({ payload = {} }) {
               <div className="text-[8px] text-zinc-600 font-mono mb-0.5">persistent · embedded</div>
               <ChunkList />
               <div className="flex items-center justify-between mt-2">
-                <span className="text-[8px] text-zinc-600 font-mono">top-4 chunks</span>
+                <span className="text-[8px] text-zinc-600 font-mono">{DIAGRAM_RAG_TOP_CHUNKS_LABEL}</span>
                 <span className="text-[8px] text-amber-500/60 font-mono">HNSW</span>
               </div>
             </div>
@@ -313,7 +321,7 @@ export default function ArchitectureFlowWidget({ payload = {} }) {
           </div>
           <div>
             <div className="text-[11px] font-bold text-zinc-200 uppercase tracking-wide">Llama.cpp Engine</div>
-            <div className="text-[9px] text-zinc-500 font-mono">Llama-3.2-1B · GGUF · INT4 quant</div>
+            <div className="text-[9px] text-zinc-500 font-mono">{DIAGRAM_LLM_SUBTITLE}</div>
           </div>
         </div>
 
@@ -326,7 +334,7 @@ export default function ArchitectureFlowWidget({ payload = {} }) {
             <BarChart2 size={9} className="text-amber-400/70" />
             <span className="text-amber-400/70 font-mono font-bold uppercase tracking-wider text-[8px]">RAG Phase</span>
           </div>
-          <p className="text-zinc-500 italic">Query → 384-dim embedding via fastembed → cosine search → top-4 CV sections retrieved from ChromaDB.</p>
+          <p className="text-zinc-500 italic">{DIAGRAM_RAG_PHASE_TEXT}</p>
         </div>
         <div className="text-[10px] leading-relaxed border-l border-white/[0.05] pl-3">
           <div className="flex items-center gap-1.5 mb-1">

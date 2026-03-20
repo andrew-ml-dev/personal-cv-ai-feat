@@ -12,6 +12,7 @@ import { EXPERIENCE } from './experience'
 import { TECH_STACK } from './stack'
 import { PROJECTS } from './projects'
 import { CONTACT_INTRO, CONTACT_LINKS } from './contact'
+import { envString } from './env'
 
 export const NAV_ITEMS = [
   {
@@ -29,8 +30,11 @@ export const NAV_ITEMS = [
     userMsg: 'How is this AI portfolio built?',
     botType: 'ArchitectureFlowWidget', // <--- New widget name
     getBotPayload: () => ({
-      title: 'AI Data Lifecycle: Edge Inference',
-      subtitle: 'From Browser to Raspberry Pi 5 Silicon',
+      title: envString('VITE_ARCH_WIDGET_TITLE', 'AI Data Lifecycle: Edge Inference'),
+      subtitle: envString(
+        'VITE_ARCH_WIDGET_SUBTITLE',
+        'From Browser to Raspberry Pi 5 Silicon',
+      ),
       
       // System components (diagram nodes)
       nodes: {
@@ -61,7 +65,10 @@ export const NAV_ITEMS = [
     getBotPayload: () => [
       {
         title: 'Practical application of the Android Neural Network API for TF Lite',
-        url: 'https://codahead.com/blog/practical-application-of-the-android-neural-network-api-for-the-use-of-tensorflow-lite-models',
+        url: envString(
+          'VITE_PUBLICATION_NN_API_URL',
+          'https://codahead.com/blog/practical-application-of-the-android-neural-network-api-for-the-use-of-tensorflow-lite-models',
+        ),
         tag: 'Edge ML',
         level: 'Advanced',
         readTime: '7 min',
@@ -83,7 +90,10 @@ export const NAV_ITEMS = [
     
       {
         title: 'Face Swap System',
-        url: 'https://codahead.com/blog/face-swap-system',
+        url: envString(
+          'VITE_PUBLICATION_FACE_SWAP_URL',
+          'https://codahead.com/blog/face-swap-system',
+        ),
         tag: 'Computer Vision',
         level: 'Advanced',
         readTime: '6 min',
@@ -105,7 +115,10 @@ export const NAV_ITEMS = [
     
       {
         title: 'TikTok clone for beginners',
-        url: 'https://codahead.com/blog/tiktok-clone-for-beginners',
+        url: envString(
+          'VITE_PUBLICATION_TIKTOK_URL',
+          'https://codahead.com/blog/tiktok-clone-for-beginners',
+        ),
         tag: 'Mobile/Video',
         level: 'Production',
         readTime: '5 min',
@@ -127,7 +140,10 @@ export const NAV_ITEMS = [
     
       {
         title: 'How to create your own messaging app',
-        url: 'https://codahead.com/blog/how-to-create-your-own-messaging-app',
+        url: envString(
+          'VITE_PUBLICATION_MESSAGING_URL',
+          'https://codahead.com/blog/how-to-create-your-own-messaging-app',
+        ),
         tag: 'Architecture',
         level: 'Production',
         readTime: '6 min',
@@ -163,10 +179,13 @@ export const NAV_ITEMS = [
     userMsg: 'Tell me about your education.',
     botType: 'EducationWidget',
     getBotPayload: () => ({
-      institution: 'AGH University of Krakow',
-      degree: 'Master of Science (MSc)',
-      focus: 'Mechatronics, Robotics, and Automation Engineering',
-      period: '2014 – 2019',
+      institution: envString('VITE_EDU_INSTITUTION', 'AGH University of Krakow'),
+      degree: envString('VITE_EDU_DEGREE', 'Master of Science (MSc)'),
+      focus: envString(
+        'VITE_EDU_FOCUS',
+        'Mechatronics, Robotics, and Automation Engineering',
+      ),
+      period: envString('VITE_EDU_PERIOD', '2014 – 2019'),
     }),
   },
   {
@@ -201,9 +220,15 @@ export const NAV_ITEMS = [
     botType: 'ResumeWidget',
   
     getBotPayload: () => ({
-      fileName: 'Andrew_Ludkiewicz_CV.md',
-      githubUrl: 'https://github.com/andrew-ml-dev/circum_vitae/blob/main/README.md',
-      pdfUrl: 'https://raw.githubusercontent.com/andrew-ml-dev/circum_vitae/refs/heads/main/output/cv.pdf'
-    })
+      fileName: envString('VITE_RESUME_FILE_NAME', 'Andrew_Ludkiewicz_CV.md'),
+      githubUrl: envString(
+        'VITE_RESUME_GITHUB_URL',
+        'https://github.com/andrew-ml-dev/circum_vitae/blob/main/README.md',
+      ),
+      pdfUrl: envString(
+        'VITE_RESUME_PDF_URL',
+        'https://raw.githubusercontent.com/andrew-ml-dev/circum_vitae/refs/heads/main/output/cv.pdf',
+      ),
+    }),
   }
 ]

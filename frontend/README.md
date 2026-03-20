@@ -35,7 +35,7 @@ This is the frontend component of the CV Portfolio, built with React, Vite, and 
    ```bash
    npm run dev
    ```
-5. Open your browser and navigate to **http://localhost:5173**. The app will automatically proxy backend API calls to `localhost:8000`.
+5. Copy `example.env` to `.env` if you do not have one yet, then start the dev server. Open **http://localhost:5173** (or the port set in `VITE_DEV_SERVER_PORT`). `/api/*` is proxied to `VITE_DEV_PROXY_TARGET` (default `http://localhost:8000`).
 
 ## Building for Production
 
@@ -67,7 +67,20 @@ frontend/
 │       └── widgets/            ← Component registry and specific widget UI
 ```
 
+## Configuration (`.env`)
+
+Portfolio copy, URLs, API paths, and diagram labels are driven by **`VITE_*` variables**. See **`example.env`** for the full list and defaults.
+
+- Shared API helpers: `src/config/env.js` (`VITE_BACKEND_URL`, `VITE_CHAT_PATH`, stats polling, architecture diagram strings).
+- Identity, sidebar, about/welcome: `src/config/profile.js`
+- Contact block: `src/config/contact.js`
+- Navigation payloads (education, resume, publications): `src/config/nav.js`
+- Optional full tech stack JSON: `VITE_TECH_STACK_JSON` in `src/config/stack.js`
+
+`index.html` title and Google Fonts URL are injected at build time from `VITE_HTML_TITLE` and `VITE_GOOGLE_FONTS_CSS` via `vite.config.js`.
+
 ## Customisation
 
-- To change the available static data or sidebar options, edit `src/data/mockData.js`.
-- To add a newly designed widget, create a new React component inside `src/components/widgets/` and register it inside `WidgetRegistry.jsx`.
+- Prefer updating `.env` (from `example.env`) instead of editing source for deploy-specific values.
+- Sidebar menu and widget wiring live in `src/config/nav.js` (structure) and related `src/config/*.js` files.
+- To add a widget, create a component under `src/components/widgets/` and register it in `WidgetRegistry.jsx`.

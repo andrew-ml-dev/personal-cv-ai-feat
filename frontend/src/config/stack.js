@@ -1,10 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // TECH STACK
 // Each key is a category label; the value is the list of skill tags.
-// Add new categories or skills freely — the widget auto-assigns colours by index.
+// Override the entire object with valid JSON in VITE_TECH_STACK_JSON (optional).
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const TECH_STACK = {
+import { envString } from './env'
+
+const DEFAULT_TECH_STACK = {
   'ML & Vision': [
     'PyTorch Lightning',
     'TensorFlow',
@@ -35,14 +37,24 @@ export const TECH_STACK = {
     'Prometheus',
   ],
   'Backend & Infra': [
-    'FastAPI', // carried over from your earlier scripts
+    'FastAPI',
     'Linux / Bash',
     'Git',
     'OpenAI API',
   ],
-  'Tools & AI Workflow': [
-    'Cursor IDE',
-    'Vibecoding',
-    'AI-Assisted Development',
-  ],
+  'Tools & AI Workflow': ['Cursor IDE', 'Vibecoding', 'AI-Assisted Development'],
 }
+
+function loadTechStack() {
+  const raw = envString('VITE_TECH_STACK_JSON')
+  if (!raw) return DEFAULT_TECH_STACK
+  try {
+    const o = JSON.parse(raw)
+    if (o && typeof o === 'object' && !Array.isArray(o)) return o
+  } catch {
+    console.warn('VITE_TECH_STACK_JSON: invalid JSON, using built-in tech stack.')
+  }
+  return DEFAULT_TECH_STACK
+}
+
+export const TECH_STACK = loadTechStack()

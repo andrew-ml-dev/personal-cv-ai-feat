@@ -1,10 +1,9 @@
 import { useState, useCallback, useRef } from 'react'
 import { WELCOME_MESSAGE } from '../data/mockData'
+import { CHAT_API_URL } from '../config/env'
 
 let idCounter = 1
 const genId = () => `msg_${idCounter++}_${Date.now()}`
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:3234'
 
 export function useChat() {
   const [messages, setMessages] = useState([WELCOME_MESSAGE])
@@ -91,7 +90,7 @@ export function useChat() {
         const controller = new AbortController()
         abortRef.current = controller
 
-        const response = await fetch(`${BACKEND_URL}/chat`, {
+        const response = await fetch(CHAT_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text }),
@@ -131,7 +130,7 @@ export function useChat() {
       } catch (err) {
         if (err.name !== 'AbortError') {
           finalizeStream(
-            `I can't reach the backend right now. Make sure the FastAPI server is running at ${BACKEND_URL} (\`uvicorn main:app --reload\` in the \`/backend\` folder).`,
+            `I can't reach the backend right now. Make sure the FastAPI server is reachable at ${CHAT_API_URL} (\`uvicorn main:app --reload\` in the \`/backend\` folder).`,
           )
         }
       } finally {

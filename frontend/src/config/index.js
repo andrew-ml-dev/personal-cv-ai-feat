@@ -8,6 +8,7 @@
 //   import { TECH_STACK } from '../config/stack'
 // ─────────────────────────────────────────────────────────────────────────────
 
+export * from './env'
 export * from './profile'
 export * from './experience'
 export * from './stack'
