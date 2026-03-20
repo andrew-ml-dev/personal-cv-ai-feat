@@ -158,4 +158,6 @@ def build_messages(
 
     messages.append({"role": "user", "content": final_user_content})
 
+    logger.info("build_messages: %s", messages)
+
     return messages

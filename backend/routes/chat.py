@@ -149,69 +149,116 @@ async def chat(req: ChatRequest, request: Request):
     session_id = get_session_id(req, request)
     use_history = req.use_history if req.use_history is not None else True
 
+    # ------------------------
+    # 🛡️ SAFETY CHECK
+    # ------------------------
     if not is_safe_prompt(req.message):
-        async def fake_stream():
-            yield f"data: {json.dumps({'text': 'Blocked'})}\n\n"
-            yield "data: [DONE]\n\n"
-
-        return StreamingResponse(fake_stream(), media_type="text/event-stream")
+        return StreamingResponse(
+            blocked_stream(),
+            media_type="text/event-stream"
+        )
 
     # ------------------------
     # 🧠 HISTORY
     # ------------------------
     history = []
-
     if use_history and session_id:
-        # Fetch the history without blocking the main thread
         history = await run_in_threadpool(get_user_history, session_id)
-
-    # Save the user message in the background
-    if use_history and session_id:
         await run_in_threadpool(save_to_history, session_id, "user", req.message)
 
     # ------------------------
     # ⚡ CACHE
     # ------------------------
     cache_key = get_cache_key(f"{session_id}:{req.message}")
-
     if cache_key in CACHE:
-        async def cached_stream():
-            yield f"data: {sanitize_output(CACHE[cache_key])}\n\n"
-            yield "data: [DONE]\n\n"
-
-        return StreamingResponse(cached_stream(), media_type="text/event-stream")
+        return StreamingResponse(
+            cached_stream(CACHE[cache_key]),
+            media_type="text/event-stream"
+        )
 
     # ------------------------
-    # 🧠 BUILD PROMPT
+    # 🧠 RAG (Vector Search)
     # ------------------------
+    extra_context = ""
+
     if settings.use_vector_search:
         try:
-            chunks = await run_in_threadpool(search_chunks, req.message, settings.qdrant_top_k)
-            extra_context = "\n\n---\n\n".join(chunks) if chunks else await fetch_resume_markdown()
+            chunks = await run_in_threadpool(
+                search_chunks,
+                req.message,
+                settings.qdrant_top_k
+            )
+
+            if not chunks:
+                logger.info("RAG: No relevant chunks found for query: %s", req.message)
+                return StreamingResponse(
+                    not_found_stream(),
+                    media_type="text/event-stream"
+                )
+
+            extra_context = "\n\n---\n\n".join(chunks)
+
         except Exception as exc:
-            logger.warning("Vector search failed, falling back to full resume: %s", exc)
-            extra_context = await fetch_resume_markdown()
+            logger.warning("Vector search failed, using empty context: %s", exc)
+            extra_context = ""
     else:
         extra_context = await fetch_resume_markdown()
 
-    messages = build_messages(req.message, history, use_history, extra_context=extra_context)
+    # ------------------------
+    # 🚀 LLM GENERATION
+    # ------------------------
+    messages = build_messages(
+        req.message,
+        history,
+        use_history,
+        extra_context=extra_context
+    )
 
     context_tokens = _context_token_count(messages)
     CONTEXT_STATS["last_context_tokens"] = context_tokens
+
     if session_id:
         CONTEXT_STATS["per_session"][session_id] = context_tokens
 
     logger.info({
+        "event": "llm_start",
         "session_id": session_id,
-        "use_history": use_history,
         "history_len": len(history),
+        "context_tokens": context_tokens,
     })
 
     return StreamingResponse(
         stream_llama(messages, cache_key, session_id, use_history),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
     )
+
+
+# ------------------------
+# 🔧 STREAM HELPERS
+# ------------------------
+
+async def blocked_stream():
+    yield "data: Blocked\n\n"
+    yield "data: [DONE]\n\n"
+
+
+async def cached_stream(text: str):
+    yield f"data: {text}\n\n"
+    yield "data: [DONE]\n\n"
+
+
+async def not_found_stream():
+    message = (
+        "I'm sorry, I couldn't find any relevant information in Andrew's CV "
+        "regarding your request."
+    )
+    yield f"data: {message}\n\n"
+    yield "data: [DONE]\n\n"
 
 
 @router.get("/chat/stats")
