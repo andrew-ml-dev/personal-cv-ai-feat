@@ -86,6 +86,34 @@ class Settings(BaseSettings):
         description="Target inference rate reported in the health API.",
     )
 
+    # ---------------------------------------------------------
+    # ChromaDB / Vector Search
+    # ---------------------------------------------------------
+    chroma_path: str = Field(
+        "/tmp/chroma_data",
+        description="Directory where ChromaDB persists its data.",
+    )
+    chroma_collection: str = Field(
+        "cv_chunks",
+        description="Name of the ChromaDB collection used for CV chunks.",
+    )
+    qdrant_top_k: int = Field(
+        4,
+        description="Number of relevant chunks to retrieve per query.",
+    )
+    embedding_model: str = Field(
+        "BAAI/bge-small-en-v1.5",
+        description="fastembed model name used for generating embeddings.",
+    )
+    use_vector_search: bool = Field(
+        True,
+        description="When True, uses ChromaDB vector search instead of injecting the full CV.",
+    )
+    index_api_key: str = Field(
+        "",
+        description="API key required to call the /index/* endpoints. Leave empty to disable auth.",
+    )
+
     @property
     def llama_api_url(self) -> str:
         return f"http://{self.llama_host}:{self.llama_port}{self.llama_api_path}"

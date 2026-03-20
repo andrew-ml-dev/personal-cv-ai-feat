@@ -11,7 +11,7 @@ services:
       - "-m"
       - "/models/model.gguf"
       - "-c"
-      - "2048"
+      - "4096"
       - "--host"
       - "0.0.0.0"
       - "--port"
@@ -29,12 +29,15 @@ services:
     image: cv-portfolio-backend
     container_name: cv-portfolio-backend
     restart: unless-stopped
-
+    
     env_file:
       - ./backend/.env
     environment:
       LLAMA_HOST: llama-engine
       LLAMA_PORT: 8081
+      CHROMA_PATH: /chroma_data
+    volumes:
+      - chroma_data:/chroma_data
     depends_on:
       - llama-engine
     networks:
@@ -79,3 +82,4 @@ networks:
 volumes:
   caddy_data:
   caddy_config:
+  chroma_data:
