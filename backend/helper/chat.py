@@ -134,7 +134,7 @@ def build_messages(
 ) -> List[Dict]:
     # 1. Keep the system prompt clean - only instructions and role
     messages = [
-        {"role": "system", "content": settings.system_prompt},
+        {"role": "system", "content": settings.system_prompt_with_summary},
     ]
 
     # 2. Append history (if needed)

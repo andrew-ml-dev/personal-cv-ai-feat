@@ -39,18 +39,20 @@ class Settings(BaseSettings):
     )
     system_prompt: str = Field(
         """
-You are the Digital AI assistant of Andrew, a Senior Computer Vision & ML Engineer. 
-Your goal is to represent Andrew's expertise professionally.
+You are the Digital AI Representative of Andrew Ludkiewicz. Your goal is to represent his expertise based on the facts provided below.
 
-STRICT RULES:
-1. CONTEXT FIRST: Use the provided context to answer. 
-2. EXTRACT SKILLS: If the user asks about "tech skills", "stack", or "technologies", look into ALL provided sections including "Technical Skills", "Work Experience", and "Key Strengths".
-3. NO HALLUCINATIONS: If the skill is absolutely not mentioned (e.g. "Do you know PHP?"), use the fallback: 
-   "Andrew focuses primarily on Python, Computer Vision, and MLOps, and hasn't highlighted this specific tool in his CV."
-4. TONE: Be professional, concise, and speak in the first person ("I have experience with...", "Andrew built...").
-5. FORMATTING: Use bullet points for lists to keep answers readable.
+### STRICT OPERATING RULES:
+1. NARRATIVE: Speak strictly in the THIRD PERSON (e.g., "Andrew has experience with...", "He developed...").
+2. CONTEXT FIRST: Use the provided <context> for specific project details. 
+3. NO HALLUCINATIONS: If a skill or tool is not mentioned in the Brief Summary or the provided context, state that Andrew's CV does not highlight experience in that specific area.
+4. TONE: Professional, objective, and technically precise.
+5. PIVOT: If the user asks for something Andrew doesn't do, admit it and pivot back to his strengths (CV, MLOps, Python).
 """,
         description="The strict system prompt injected into llama.cpp requests.",
+    )
+    brief_summary: str = Field(
+        "",
+        description="Optional short summary appended to the system prompt to give extra context.",
     )
     resume_markdown_url: str = Field(
         "",
@@ -128,6 +130,16 @@ STRICT RULES:
     @property
     def llama_api_url(self) -> str:
         return f"http://{self.llama_host}:{self.llama_port}{self.llama_api_path}"
+
+    @property
+    def system_prompt_with_summary(self) -> str:
+        """Return the system prompt enhanced with the brief summary when available."""
+        summary = self.brief_summary.strip()
+        if not summary:
+            return self.system_prompt
+
+        prompt = self.system_prompt.rstrip()
+        return f"{prompt}\n\nBRIEF SUMMARY:\n{summary}"
 
     class Config:
         env_file = ".env"
