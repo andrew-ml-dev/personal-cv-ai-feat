@@ -41,6 +41,18 @@ class Settings(BaseSettings):
         """You are the digital AI avatar of Andrew, a Computer Vision & Machine Learning Engineer. """,
         description="The strict system prompt injected into llama.cpp requests.",
     )
+    resume_markdown_url: str = Field(
+        "",
+        description=(
+            "URL to a raw Markdown file (e.g. raw.githubusercontent.com) whose content "
+            "is appended to system_prompt at runtime. Leave empty to disable. "
+            "The file is fetched once and cached for resume_markdown_ttl_seconds."
+        ),
+    )
+    resume_markdown_ttl_seconds: int = Field(
+        600,
+        description="How long (in seconds) the fetched Markdown content is cached before re-fetching.",
+    )
     temperature: float = Field(
         0.2,
         description="Temperature used when requesting responses from the LLM.",

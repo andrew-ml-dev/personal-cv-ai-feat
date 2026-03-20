@@ -12,7 +12,7 @@ from fastapi.concurrency import run_in_threadpool  # Added for synchronous DB he
 from config import settings
 from models.chat import ChatRequest
 from helper.chat import get_session_id, get_user_history, save_to_history
-from helper.chat import sanitize_output, is_safe_prompt, build_messages, get_cache_key, CACHE
+from helper.chat import sanitize_output, is_safe_prompt, build_messages, get_cache_key, CACHE, fetch_resume_markdown
 from dependencies import limiter
 
 router = APIRouter()
@@ -183,7 +183,8 @@ async def chat(req: ChatRequest, request: Request):
     # ------------------------
     # 🧠 BUILD PROMPT
     # ------------------------
-    messages = build_messages(req.message, history, use_history)
+    resume_md = await fetch_resume_markdown()
+    messages = build_messages(req.message, history, use_history, extra_context=resume_md)
 
     context_tokens = _context_token_count(messages)
     CONTEXT_STATS["last_context_tokens"] = context_tokens

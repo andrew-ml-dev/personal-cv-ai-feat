@@ -195,15 +195,15 @@ export const NAV_ITEMS = [
   },
   {
     id: 'resume',
-    label: 'Resume PDF',
+    label: 'Resume (Markdown)',
     icon: 'file', 
     userMsg: 'Can I see your full resume?',
     botType: 'ResumeWidget',
+  
     getBotPayload: () => ({
-      fileName: 'cv.pdf',
-      fileSize: '0.5 MB',
-      previewUrl: '/resume-preview.png', // Optional: preview screenshot of the first page
-      downloadUrl: '/cv.pdf',
-    }),
-  },
+      fileName: 'Andrew_Ludkiewicz_CV.md',
+      githubUrl: 'https://github.com/andrew-ml-dev/circum_vitae/blob/main/README.md',
+      pdfUrl: 'https://raw.githubusercontent.com/andrew-ml-dev/circum_vitae/refs/heads/main/output/cv.pdf'
+    })
+  }
 ]
