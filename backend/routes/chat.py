@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import time
@@ -257,7 +258,11 @@ async def not_found_stream():
         "I'm sorry, I couldn't find any relevant information in Andrew's CV "
         "regarding your request."
     )
-    yield f"data: {message}\n\n"
+    words = message.split(" ")
+    for i, word in enumerate(words):
+        chunk = word if i == 0 else f" {word}"
+        yield f"data: {chunk}\n\n"
+        await asyncio.sleep(0.08)
     yield "data: [DONE]\n\n"
 
 
