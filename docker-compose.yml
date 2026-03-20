@@ -30,6 +30,8 @@ services:
     container_name: cv-portfolio-backend
     restart: unless-stopped
 
+    env_file:
+      - ./backend/.env
     environment:
       LLAMA_HOST: llama-engine
       LLAMA_PORT: 8081
@@ -46,6 +48,8 @@ services:
     image: cv-portfolio-frontend
     container_name: cv-portfolio-frontend
     restart: unless-stopped
+    env_file:
+      - ./frontend/.env
     depends_on:
       - backend
     networks:

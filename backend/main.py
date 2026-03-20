@@ -61,14 +61,14 @@ async def log_requests(request: Request, call_next):
     else:
         client_ip = client_ip.split(",")[0].strip()
 
-    # ДОБАВИЛИ ПРОВЕРКУ СЮДА: Логируем ВХОД, только если это не статистика
+    # ADDED CHECK HERE: Log incoming request only if it's not a stats request
     if "/chat/stats" not in request.url.path:
         logger.info(f"📥 REQUEST  | IP: {client_ip} | Method: {request.method} | Path: {request.url.path}")
 
     # Pass the request down the stack to the routers
     response = await call_next(request)
 
-    # Логируем ВЫХОД (тут у вас проверка уже стояла правильно)
+    # Log outgoing response (check was already present here)
     if "/chat/stats" not in request.url.path:
         logger.info(f"📤 RESPONSE | IP: {client_ip} | Status: {response.status_code}")
 
