@@ -132,17 +132,30 @@ def build_messages(
     use_history: bool,
     extra_context: str = "",
 ) -> List[Dict]:
-    system_content = settings.system_prompt
-    if extra_context:
-        system_content = f"{system_content}\n\n---\n\n{extra_context}"
-
+    # 1. Keep the system prompt clean - only instructions and role
     messages = [
-        {"role": "system", "content": system_content},
+        {"role": "system", "content": settings.system_prompt},
     ]
 
+    # 2. Append history (if needed)
     if use_history and history:
         messages.extend(history[-10:])
 
-    messages.append({"role": "user", "content": user_message})
+    # 3. Construct the final user message
+    if extra_context:
+        # Wrap context and query into a single prompt for RAG
+        final_user_content = (
+            f"Context information is below:\n"
+            f"<context>\n"
+            f"{extra_context}\n"
+            f"</context>\n\n"
+            f"Given the context information and no prior knowledge, answer the query.\n"
+            f"Query: {user_message}"
+        )
+    else:
+        # Standard dialogue if context is not found/needed
+        final_user_content = user_message
+
+    messages.append({"role": "user", "content": final_user_content})
 
     return messages

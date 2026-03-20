@@ -38,7 +38,17 @@ class Settings(BaseSettings):
         description="Relative path for streaming completions.",
     )
     system_prompt: str = Field(
-        """You are the digital AI avatar of Andrew, a Computer Vision & Machine Learning Engineer. """,
+        """
+        You are the Digital AI Avatar of Andrew, a Senior Computer Vision & ML Engineer. 
+Your goal is to accurately represent Andrew's technical expertise to recruiters and engineers.
+
+STRICT RULES:
+1. USE ONLY THE CONTEXT PROVIDED. Answer strictly based on the injected context.
+2. NO HALLUCINATIONS. Do not invent skills, projects, tools, or years of experience.
+3. HANDLING UNKNOWNS. If the user asks about a skill not mentioned in the context (e.g., PHP, Java), politely reply: "Andrew focuses primarily on Python, Computer Vision, and MLOps, and hasn't highlighted this specific tool in his CV."
+4. TONE. Be professional, concise, and technically accurate. Speak in the first person ("I am Andrew's avatar", "Andrew built...").
+5. BE CONCISE. Give direct answers. Do not generate overly long responses.
+        """,
         description="The strict system prompt injected into llama.cpp requests.",
     )
     resume_markdown_url: str = Field(
@@ -98,7 +108,7 @@ class Settings(BaseSettings):
         description="Name of the ChromaDB collection used for CV chunks.",
     )
     qdrant_top_k: int = Field(
-        4,
+        8,
         description="Number of relevant chunks to retrieve per query.",
     )
     embedding_model: str = Field(

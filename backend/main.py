@@ -38,19 +38,26 @@ async def _auto_index_cv() -> None:
         return
 
     try:
+        # ENSURE the import points to the correct file with our new ChromaDB code!
+        # If your file is named vector_store.py, change helper.qdrant to helper.vector_store
         from helper.qdrant import get_collection_count, index_text
         from helper.chat import fetch_resume_markdown
 
         existing = await run_in_threadpool(get_collection_count)
-        if existing > 0:
-            logger.info("Vector store already has %d chunks — skipping auto-index.", existing)
-            return
+        
+        # --- DISABLING CHECK FOR DEBUGGING ---
+        # if existing > 0:
+        #     logger.info("Vector store already has %d chunks — skipping auto-index.", existing)
+        #     return
+        logger.info("Ignoring existing %d chunks, forcing re-index for debug...", existing)
+        # -------------------------------------
 
         logger.info("Auto-indexing CV from %s …", settings.resume_markdown_url)
         text = await fetch_resume_markdown()
         if text:
             count = await run_in_threadpool(index_text, text, "cv")
             logger.info("Auto-index complete: %d chunks stored.", count)
+            
     except Exception as exc:
         logger.warning("Auto-index failed: %s", exc)
 
